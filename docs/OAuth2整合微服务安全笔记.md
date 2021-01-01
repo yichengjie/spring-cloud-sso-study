@@ -215,6 +215,9 @@
                     log.info("audit log update fail 403");
                     handleError(403, currentContext) ;
                 }
+                // 将用户信息放在header中传给后面的微服务
+                String username = tokenInfo.getUser_name();
+                currentContext.addZuulRequestHeader("username", username);
             }else {
                 if (!isOauthServerRequest(request)){
                     log.info("audit log update fail 401");
@@ -239,7 +242,20 @@
         }
     }
     ```
-3. 删除资源服务器（order-service）中认证授权相关代码
+3. Token信息entity编写
+    ```java
+    @Data
+    public class TokenInfo {
+        private boolean active;
+        private String user_name ;
+        private String client_id ;
+        private Date exp ;
+        private String [] scope ;
+        private String [] authorities ;
+        private String [] aud ;
+    }
+    ```
+4. 删除资源服务器（order-service）中认证授权相关代码
     ```txt
     3.1 删除Oauth2ResourceServerConfig.java
     3.2 删除Oauth2WebSecurityConfig.java

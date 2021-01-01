@@ -41,6 +41,9 @@ public class OAuth2AuthorizationFilter extends ZuulFilter {
                 log.info("audit log update fail 403");
                 handleError(403, currentContext) ;
             }
+            // 将用户信息放在header中传给后面的微服务
+            String username = tokenInfo.getUser_name();
+            currentContext.addZuulRequestHeader("username", username);
         }else {
             if (!isOauthServerRequest(request)){
                 log.info("audit log update fail 401");
