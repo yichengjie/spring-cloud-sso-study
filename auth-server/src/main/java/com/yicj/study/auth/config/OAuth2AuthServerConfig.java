@@ -36,6 +36,13 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
                 .scopes("read","write").autoApprove(true)
                 .accessTokenValiditySeconds(360000)
                 .resourceIds("ORDER_SERVICE")
+                .authorizedGrantTypes("implicit","refresh_token","password","authorization_code")
+                .and()
+                //注意这里没有填写resourceIds，表示使用整个clientId获取的token能访问其他所有的资源服务器
+                .withClient("admin_service")
+                .secret("secret")
+                .scopes("read","write").autoApprove(true)
+                .accessTokenValiditySeconds(360000)
                 .authorizedGrantTypes("implicit","refresh_token","password","authorization_code") ;
     }
 
