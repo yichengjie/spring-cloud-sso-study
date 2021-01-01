@@ -32,7 +32,7 @@ webpackEmptyAsyncContext.id = "./$$_lazy_route_resource lazy recursive";
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align: center\">\n  <h1>Welcome to {{title}}</h1>\n</div>\n\n<div class=\"row\">\n    <div class=\"col-lg-4\"></div>\n    <div class=\"col-lg-4\">\n        <div [hidden]=\"authenticated\">\n            <p>please login</p>\n            <form role=\"form\" (submit)=\"login()\" >\n                <div class =\"form-group\">\n                    <label for=\"username\">Username:\n                        <input type=\"text\" class =\"form-control\" id=\"username\" name=\"username\" [(ngModel)] =\"credentials.username\" />\n                    </label>\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password:\n                        <input type=\"password\" class =\"form-control\" id=\"password\" name=\"password\" [(ngModel)] =\"credentials.password\" />\n                    </label>\n                </div>\n                <button type=\"submit\" class=\"btn btn-primary\">Login</button>\n            </form>\n        </div>\n    </div>\n    <div class=\"col-lg-4\"></div>\n</div>\n\n\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align: center\">\n    <h1>Welcome to {{title}}</h1>\n    <button (click)=\"getOrder()\"  type=\"button\" class=\"btn btn-primary\">Get Order Info</button>\n    <br>\n    <p>order id : {{order.id}}</p>\n    <p>order product id : {{order.productId}}</p>\n</div>\n\n<div class=\"row\">\n    <div class=\"col-lg-4\"></div>\n    <div class=\"col-lg-4\">\n        <div [hidden]=\"authenticated\">\n            <p>please login</p>\n            <form role=\"form\" (submit)=\"login()\" >\n                <div class =\"form-group\">\n                    <label for=\"username\">Username:\n                        <input type=\"text\" class =\"form-control\" id=\"username\" name=\"username\" [(ngModel)] =\"credentials.username\" />\n                    </label>\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password:\n                        <input type=\"password\" class =\"form-control\" id=\"password\" name=\"password\" [(ngModel)] =\"credentials.password\" />\n                    </label>\n                </div>\n                <button type=\"submit\" class=\"btn btn-primary\">Login</button>\n            </form>\n        </div>\n    </div>\n    <div class=\"col-lg-4\"></div>\n</div>\n\n\n");
 
 /***/ }),
 
@@ -325,12 +325,20 @@ let AppComponent = class AppComponent {
         this.title = 'hello world';
         this.authenticated = false;
         this.credentials = { username: "admin", password: "admin" };
+        this.order = { id: "", productId: "" };
     }
     login() {
         this.http.post('login', this.credentials).subscribe(() => {
             this.authenticated = true;
         }, () => {
             alert('auth fail !');
+        });
+    }
+    getOrder() {
+        this.http.get("api/order/orders/1").subscribe((data) => {
+            this.order = data;
+        }, () => {
+            alert("get order fail !");
         });
     }
 };

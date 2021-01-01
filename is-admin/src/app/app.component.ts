@@ -10,6 +10,7 @@ export class AppComponent {
   title = 'hello world';
     authenticated = false ;
     credentials ={username:"admin", password:"admin"} ;
+    order ={id:"",productId:""} ;
     constructor(private http: HttpClient) {
 
     }
@@ -19,5 +20,15 @@ export class AppComponent {
         }, ()=>{
             alert('auth fail !')
         }) ;
+    }
+
+    getOrder(){
+        this.http.get("api/order/orders/1").subscribe(
+            (data:any)=>{
+                this.order = data;
+            },()=>{
+                alert("get order fail !")
+            }
+        ) ;
     }
 }

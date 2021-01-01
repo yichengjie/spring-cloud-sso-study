@@ -3,7 +3,6 @@ package com.yicj.study.admin.controller;
 import com.yicj.study.admin.model.Credentials;
 import com.yicj.study.admin.model.TokenInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,7 +23,7 @@ public class UserController {
 
     @PostMapping("/login")
     public void login(@RequestBody  Credentials credentials, HttpSession session){
-        String url = "http://localhost:7777/oauth/token" ;
+        String url = "http://localhost:8080/oauth/token" ;
         HttpHeaders headers = new HttpHeaders() ;
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBasicAuth("admin_service","secret");

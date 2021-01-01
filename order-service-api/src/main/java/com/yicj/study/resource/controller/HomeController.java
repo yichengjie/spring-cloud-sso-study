@@ -1,10 +1,9 @@
 package com.yicj.study.resource.controller;
 
+import com.yicj.study.resource.model.OrderInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 
@@ -27,5 +26,13 @@ public class HomeController {
     @GetMapping("/hello")
     public String hello(){
         return "hello world" ;
+    }
+
+    @GetMapping("/orders/{id}")
+    public OrderInfo orders(@PathVariable String id){
+        OrderInfo orderInfo = new OrderInfo() ;
+        orderInfo.setId(id);
+        orderInfo.setProductId("5");
+        return orderInfo ;
     }
 }
