@@ -2,6 +2,7 @@ package com.yicj.study.zuul.filter;
 
 import com.yicj.study.zuul.common.CommonUtils;
 import com.yicj.study.zuul.model.TokenInfo;
+import jdk.nashorn.internal.parser.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -25,19 +26,17 @@ public class Oauth2AuthenticationFilterTest {
 
     @Test
     public void checkToken(){
-        String authorization = "bearer ef1844da-af96-446a-87a7-04d37ddab385" ;
+        String authorization = "bearer 7800aaea-7669-4fba-8bbc-3c8c41db6349" ;
         String url = "http://localhost:7777/oauth/check_token" ;
         String token = StringUtils.substringAfter(authorization, "bearer ") ;
         HttpHeaders headers = new HttpHeaders() ;
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set(HttpHeaders.AUTHORIZATION, "Basic " + CommonUtils.base64Encode("order_service:secret"));
-
+        headers.setBasicAuth("order_service", "secret");
+        //headers.set(HttpHeaders.AUTHORIZATION, "Basic " + CommonUtils.base64Encode("order_service:secret"));
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>() ;
         params.add("token", token);
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers, params) ;
-        //String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
-        //			Class<T> responseType
-        restTemplate.exchange(url, HttpMethod.POST, httpEntity, Object.class);
-        //log.info("token info : {}", exchange.getBody());
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers) ;
+        ResponseEntity<TokenInfo> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, TokenInfo.class);
+        log.info("token info : {}", exchange.getBody());
     }
 }

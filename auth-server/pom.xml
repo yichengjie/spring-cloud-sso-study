@@ -12,6 +12,14 @@
     <artifactId>auth-server</artifactId>
 
     <dependencies>
+        <!--
+        Unable to start ServletWebServerApplicationContext due to missing ServletWebServerFactory bean.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-oauth2</artifactId>
