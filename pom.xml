@@ -12,6 +12,7 @@
         <module>auth-server</module>
         <module>zuul-server</module>
         <module>order-service-api</module>
+        <module>is-admin</module>
     </modules>
     <packaging>pom</packaging>
 
