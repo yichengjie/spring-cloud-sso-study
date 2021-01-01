@@ -131,7 +131,120 @@
     4.1 访问服务是否正常： http://localhost:8082/test
         header参数 --> Authorization: bearer token
     ```
-
+#### 引入zuul做安全认证
+1. 添加认证过滤器
+    ```java
+    @Slf4j
+    @Component
+    public class OAuth2AuthenticationFilter extends ZuulFilter {
+        @Autowired
+        private RestTemplate restTemplate ;
+        @Override
+        public String filterType() {
+            return "pre";
+        }
+        @Override
+        public int filterOrder() {
+            return 1;
+        }
+        @Override
+        public boolean shouldFilter() {
+            return true;
+        }
+        @Override
+        public Object run() throws ZuulException {
+            log.info("====> authentication filter start..");
+            RequestContext currentContext = RequestContext.getCurrentContext();
+            HttpServletRequest request = currentContext.getRequest();
+            String authorization = request.getHeader("Authorization");
+            if (StringUtils.isBlank(authorization)){
+                return null ;
+            }
+            // 校验token的合法性
+            if (!StringUtils.startsWith(authorization,"bearer ")){
+                return null ;
+            }
+            TokenInfo tokenInfo = getTokenInfo(authorization);
+            request.setAttribute("tokenInfo", tokenInfo);
+            return null;
+        }
+        // 校验token的合法性
+        private TokenInfo getTokenInfo(String authorization) {
+            String url = "http://localhost:7777/oauth/check_token" ;
+            String token = StringUtils.substringAfter(authorization, "bearer ") ;
+            HttpHeaders headers = new HttpHeaders() ;
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.set(HttpHeaders.AUTHORIZATION, "Basic " + CommonUtils.base64Encode("order_service:secret"));
+    
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>() ;
+            params.add("token", token);
+            HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers) ;
+            //String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+            //			Class<T> responseType
+            ResponseEntity<TokenInfo> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, TokenInfo.class);
+            log.info("token info : {}", exchange.getBody());
+            return exchange.getBody() ;
+        }
+    }
+    ```
+2. 添加授权过滤器
+    ```java
+    @Slf4j
+    @Component
+    public class OAuth2AuthorizationFilter extends ZuulFilter {
+        @Override
+        public String filterType() {
+            return "pre";
+        }
+        @Override
+        public int filterOrder() {
+            return 3;
+        }
+        @Override
+        public boolean shouldFilter() {
+            return true;
+        }
+        @Override
+        public Object run() throws ZuulException {
+            log.info("====> authorization filter start..");
+            RequestContext currentContext = RequestContext.getCurrentContext();
+            HttpServletRequest request = currentContext.getRequest();
+            TokenInfo tokenInfo = (TokenInfo) request.getAttribute("tokenInfo");
+            if (tokenInfo != null && tokenInfo.isActive()){
+                if (!hasPermission(tokenInfo, request)){
+                    log.info("audit log update fail 403");
+                    handleError(403, currentContext) ;
+                }
+            }else {
+                if (!isOauthServerRequest(request)){
+                    log.info("audit log update fail 401");
+                    handleError(401, currentContext) ;
+                }
+            }
+            return null;
+        }
+        private boolean isOauthServerRequest(HttpServletRequest request){
+            String uri = request.getRequestURI();
+            return StringUtils.startsWith(uri, "/oauth") ;
+        }
+        // 是否有权限访问资源
+        private boolean hasPermission(TokenInfo tokenInfo, HttpServletRequest request) {
+            return RandomUtils.nextInt() %2 == 0 ;
+        }
+        private void handleError(int status, RequestContext ctx) {
+            ctx.getResponse().setContentType("application/json");
+            ctx.setResponseStatusCode(status);
+            ctx.setResponseBody("{\"message\":\"audit fail !\"}");
+            ctx.setSendZuulResponse(false);
+        }
+    }
+    ```
+3. 删除资源服务器（order-service）中认证授权相关代码
+    ```txt
+    3.1 删除Oauth2ResourceServerConfig.java
+    3.2 删除Oauth2WebSecurityConfig.java
+    3.3 删除pom依赖spring-cloud-starter-oauth2
+    ```
 
     
 

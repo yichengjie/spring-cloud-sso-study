@@ -74,6 +74,4 @@ public class OAuth2AuthenticationFilter extends ZuulFilter {
         log.info("token info : {}", exchange.getBody());
         return exchange.getBody() ;
     }
-
-
 }
