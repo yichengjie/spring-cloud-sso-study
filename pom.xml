@@ -11,7 +11,7 @@
         <module>eureka-server</module>
         <module>auth-server</module>
         <module>zuul-server</module>
-        <module>order-service</module>
+        <module>order-service-api</module>
     </modules>
     <packaging>pom</packaging>
 

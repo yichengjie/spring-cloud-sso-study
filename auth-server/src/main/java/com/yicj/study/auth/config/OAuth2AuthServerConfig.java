@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -25,26 +26,30 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
                 .withClient("zuul_server")
                 .secret("secret")
                 .scopes("read","write").autoApprove(true)
-                .resourceIds("RESOURCE_SERVER")
+                .accessTokenValiditySeconds(360000)
+                .resourceIds("ZUUL_SERVER")
+                .authorizedGrantTypes("implicit","refresh_token","password","authorization_code")
+                .and()
+                //
+                .withClient("order_service")
+                .secret("secret")
+                .scopes("read","write").autoApprove(true)
+                .accessTokenValiditySeconds(360000)
+                .resourceIds("ORDER_SERVICE")
                 .authorizedGrantTypes("implicit","refresh_token","password","authorization_code") ;
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(jwtTokenStore())
-            .tokenEnhancer(jwtAccessTokenConverter())
-            .authenticationManager(authenticationManager) ;
+        endpoints.authenticationManager(authenticationManager) ;
     }
 
-    @Bean
-    public TokenStore jwtTokenStore(){
-        return new JwtTokenStore(jwtAccessTokenConverter()) ;
-    }
-
-    @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter(){
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter() ;
-        converter.setSigningKey("springcloud123");
-        return converter ;
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security
+            // 获取tokenKey接口
+            .tokenKeyAccess("isAuthenticated()")
+            // 检验token是否合法，这里如果不设置，资源服务器将无法进行token校验
+            .checkTokenAccess("isAuthenticated()");
     }
 }

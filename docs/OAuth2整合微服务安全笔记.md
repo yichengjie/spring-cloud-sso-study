@@ -6,7 +6,7 @@
         <artifactId>spring-cloud-starter-oauth2</artifactId>
     </dependency>
     ```
-2. Oauth2授权服务器配置
+2. OAuth2授权服务器配置类
     ```java
     @Configuration
     @EnableAuthorizationServer
@@ -45,3 +45,78 @@
         }
     }
     ```
+3. OAuth2 Web安全配置类
+    ```java
+    @Configuration
+    @EnableWebSecurity
+    public class OAuth2WebSecurityConfig extends WebSecurityConfigurerAdapter {
+        @Bean
+        @Override
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+            return super.authenticationManagerBean();
+        }
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.inMemoryAuthentication()
+                    .withUser("guest").password("guest").authorities("ROLE_GUEST").and()
+                    .withUser("admin").password("admin").authorities("ROLE_GUEST","ROLE_ADMIN") ;
+        }
+        @Bean
+        public static PasswordEncoder passwordEncoder(){
+            return NoOpPasswordEncoder.getInstance() ;
+        }
+    }
+    ```
+#### 资源服务器开发
+1. 添加依赖
+    ```xml
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-oauth2</artifactId>
+    </dependency>
+    ```
+2. OAuth2资源服务器配置类
+    ```java
+    @Configuration
+    @EnableResourceServer
+    public class Oauth2ResourceServerConfig extends ResourceServerConfigurerAdapter {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            http.authorizeRequests()
+                .antMatchers(HttpMethod.GET,"/test").hasRole("ADMIN")
+                .antMatchers("/**").authenticated()
+                .and().csrf().disable() ;
+        }
+        @Override
+        public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+            resources.resourceId("ORDER_SERVICE") ;
+        }
+    }
+    ```
+3. OAuth2 Web安全配置类
+    ```java
+    @Configuration
+    @EnableWebSecurity
+    public class Oauth2WebSecurityConfig extends WebSecurityConfigurerAdapter {
+        // 资源服务器的令牌服务// 如何验证令牌
+        @Bean
+        public ResourceServerTokenServices tokenServices(){
+            RemoteTokenServices tokenServices = new RemoteTokenServices() ;
+            tokenServices.setClientId("order_service");
+            tokenServices.setClientSecret("secret");
+            tokenServices.setCheckTokenEndpointUrl("http://localhost:7777/oauth/check_token");
+            return tokenServices ;
+        }
+        // 认证跟用户相关信息就要配置AuthenticationManager
+        @Bean
+        @Override
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+            OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager() ;
+            authenticationManager.setTokenServices(tokenServices());
+            return authenticationManager;
+        }
+    }
+    ```
+    
+
+
