@@ -67,7 +67,7 @@ public class OAuth2AuthenticationFilter extends ZuulFilter {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>() ;
         params.add("token", token);
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers, params) ;
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers) ;
         //String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
         //			Class<T> responseType
         ResponseEntity<TokenInfo> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, TokenInfo.class);

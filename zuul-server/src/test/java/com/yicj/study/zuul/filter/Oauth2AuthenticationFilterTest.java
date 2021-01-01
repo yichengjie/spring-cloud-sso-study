@@ -1,8 +1,6 @@
 package com.yicj.study.zuul.filter;
 
-import com.yicj.study.zuul.common.CommonUtils;
 import com.yicj.study.zuul.model.TokenInfo;
-import jdk.nashorn.internal.parser.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -12,11 +10,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-
 @Slf4j
 public class Oauth2AuthenticationFilterTest {
-
     private RestTemplate restTemplate ;
 
     @Before
