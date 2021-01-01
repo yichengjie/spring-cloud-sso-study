@@ -67,6 +67,15 @@
         }
     }
     ```
+4. 验证资源服务器功能
+    ```text
+    4.1 获取token是否正常: http://localhost:7777/oauth/token
+        header参数 -> Authorization : Basic clientId clientSecret
+        form参数 -> username: admin, password:secret, grand_type:password, scope: read write
+    4.2 检验token是否正常：http://localhost:7777/oauth/check_token
+        header参数 -> Authorization: Basic clientId clientSecret
+        form参数 -> token: token (无需添加bearer前缀)
+    ```
 #### 资源服务器开发
 1. 添加依赖
     ```xml
@@ -117,6 +126,13 @@
         }
     }
     ```
+4. 验证资源服务器功能
+    ```txt
+    4.1 访问服务是否正常： http://localhost:8082/test
+        header参数 --> Authorization: bearer token
+    ```
+
+
     
 
 
