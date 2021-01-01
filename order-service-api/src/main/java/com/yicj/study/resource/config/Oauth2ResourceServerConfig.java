@@ -23,6 +23,4 @@ public class Oauth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId("ORDER_SERVICE") ;
     }
-
-
 }
