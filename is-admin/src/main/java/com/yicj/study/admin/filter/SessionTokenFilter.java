@@ -3,11 +3,12 @@ package com.yicj.study.admin.filter;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
-import com.yicj.study.admin.common.CommonUtils;
 import com.yicj.study.admin.model.TokenInfo;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Component
 public class SessionTokenFilter extends ZuulFilter {
     @Override
     public String filterType() {
