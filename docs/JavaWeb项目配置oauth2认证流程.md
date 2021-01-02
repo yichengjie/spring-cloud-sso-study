@@ -79,7 +79,7 @@
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager)
         // 服务端如果要支持refresh则必须设置userDetailService
-        //.userDetailsService(userDetailsService)
+        .userDetailsService(userDetailsService)
         ;
     }
     ```
