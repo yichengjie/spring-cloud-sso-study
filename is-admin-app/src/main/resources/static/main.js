@@ -324,7 +324,7 @@ let AppComponent = class AppComponent {
         this.http = http;
         this.title = 'hello world';
         this.authenticated = false;
-        this.credentials = { username: "admin", password: "admin" };
+        this.credentials = { username: "admin", password: "123456" };
         this.order = { id: "", productId: "" };
     }
     login() {
@@ -465,7 +465,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_2__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\code\idea\spring-cloud-sso-study\is-admin\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! D:\code\idea\spring-cloud-sso-study\is-admin-app\src\main.ts */"./src/main.ts");
 
 
 /***/ })

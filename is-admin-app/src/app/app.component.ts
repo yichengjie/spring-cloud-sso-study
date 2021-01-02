@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent {
   title = 'hello world';
     authenticated = false ;
-    credentials ={username:"admin", password:"admin"} ;
+    credentials ={username:"admin", password:"123456"} ;
     order ={id:"",productId:""} ;
     constructor(private http: HttpClient) {
 

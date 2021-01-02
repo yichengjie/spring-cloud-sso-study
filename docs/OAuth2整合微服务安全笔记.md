@@ -375,6 +375,71 @@
         return new OAuth2RestTemplate(resource, context) ;
     }
     ```
+#### 网关上做权限认证
+1. 在网关配置类中自定义权限校验表达式#permissionService.hasPermission(request, authentication)
+    ```txt
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/oauth/**").permitAll()
+            .anyRequest().access("#permissionService.hasPermission(request, authentication)");
+    }
+    ```
+2. 编写校验权限实现类
+    ```java
+    public interface PermissionService {
+        boolean hasPermission(HttpServletRequest request, Authentication authentication) ;
+    }
+    @Slf4j
+    @Service
+    public class PermissionServiceImpl implements PermissionService {
+        @Override
+        public boolean hasPermission(HttpServletRequest request, Authentication authentication) {
+    
+            return checkPermission(request, authentication);
+        }
+        // 校验用户的操作权限
+        private boolean checkPermission(HttpServletRequest request, Authentication authentication){
+           log.info("===> uri : {}", request.getRequestURI());
+           log.info("===> authentication :{}", authentication);
+            // 这里去校验用户是否有操作权限
+            return RandomUtils.nextInt() %2 ==0 ;
+        }
+    }
+    ```
+3. 编写自定义权限表达式处理器
+    ```java
+    @Component
+    public class GatewayWebSecurityExpressionHandler extends OAuth2WebSecurityExpressionHandler {
+        @Autowired
+        private PermissionService permissionService ;
+        @Override
+        protected StandardEvaluationContext createEvaluationContextInternal(Authentication authentication, FilterInvocation invocation) {
+            StandardEvaluationContext evaluationContextInternal = super.createEvaluationContextInternal(authentication, invocation);
+            evaluationContextInternal.setVariable("permissionService", permissionService);
+            return evaluationContextInternal ;
+        }
+    }
+    ```
+4. 将自定义表达式处理器配置到ResourceServerSecurityConfigurer的expressionHandler中
+    ```java
+    @Configuration
+    @EnableResourceServer
+    public class GatewaySecurityConfig extends ResourceServerConfigurerAdapter {
+        @Autowired
+        private GatewayWebSecurityExpressionHandler gatewayWebSecurityExpressionHandler ;
+        @Override
+        public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+            resources.expressionHandler(gatewayWebSecurityExpressionHandler) ;
+        }
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            http.authorizeRequests()
+                .antMatchers("/oauth/**").permitAll()
+                .anyRequest().access("#permissionService.hasPermission(request, authentication)");
+        }
+    }
+    ```
 
 
     
