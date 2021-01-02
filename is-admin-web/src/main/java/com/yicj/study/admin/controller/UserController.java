@@ -43,9 +43,8 @@ public class UserController {
         params.add("grant_type", "authorization_code");
         params.add("redirect_uri", "http://localhost:8280/oauth/callback");
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers) ;
-
         ResponseEntity<TokenInfo> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, TokenInfo.class);
-        TokenInfo tokenInfo = exchange.getBody();
+        TokenInfo tokenInfo = exchange.getBody().init();
         // 注意这里需手动调用init方法,将过期时间赋值
         return tokenInfo ;
     }

@@ -348,7 +348,7 @@ let AppComponent = class AppComponent {
         this.http.get('logout').subscribe(() => {
             // 在授权服务器上也退出登录
             //window.location.href = 'http://localhost:7777/logout' ;
-            //this.authenticated = false ;
+            this.authenticated = false;
         }, () => {
             alert('auth fail !');
         });
