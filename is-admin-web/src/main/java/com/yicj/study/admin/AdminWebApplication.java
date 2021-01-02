@@ -8,9 +8,9 @@ import org.springframework.web.client.RestTemplate;
 
 @EnableZuulProxy
 @SpringBootApplication
-public class AdminApplication {
+public class AdminWebApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AdminApplication.class, args);
+        SpringApplication.run(AdminWebApplication.class, args);
     }
 
     @Bean

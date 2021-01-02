@@ -32,7 +32,7 @@ webpackEmptyAsyncContext.id = "./$$_lazy_route_resource lazy recursive";
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align: center\">\n    <h1>Welcome to {{title}}</h1>\n    <button (click)=\"getOrder()\"  type=\"button\" class=\"btn btn-primary\">Get Order Info</button>\n    <br>\n    <p>order id : {{order.id}}</p>\n    <p>order product id : {{order.productId}}</p>\n</div>\n\n<div class=\"row\">\n    <div class=\"col-lg-4\"></div>\n    <div class=\"col-lg-4\">\n        <div [hidden]=\"authenticated\">\n            <p>please login</p>\n            <form role=\"form\" (submit)=\"login()\" >\n                <div class =\"form-group\">\n                    <label for=\"username\">Username:\n                        <input type=\"text\" class =\"form-control\" id=\"username\" name=\"username\" [(ngModel)] =\"credentials.username\" />\n                    </label>\n                </div>\n                <div class=\"form-group\">\n                    <label for=\"password\">Password:\n                        <input type=\"password\" class =\"form-control\" id=\"password\" name=\"password\" [(ngModel)] =\"credentials.password\" />\n                    </label>\n                </div>\n                <button type=\"submit\" class=\"btn btn-primary\">Login</button>\n            </form>\n        </div>\n    </div>\n    <div class=\"col-lg-4\"></div>\n</div>\n\n\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align: center\">\n    <h1>Welcome to {{title}}</h1>\n    <button (click)=\"getOrder()\"  type=\"button\" class=\"btn btn-primary\">Get Order Info</button>\n    <br>\n    <p>order id : {{order.id}}</p>\n    <p>order product id : {{order.productId}}</p>\n</div>\n");
 
 /***/ }),
 
@@ -326,6 +326,21 @@ let AppComponent = class AppComponent {
         this.authenticated = false;
         this.credentials = { username: "admin", password: "admin" };
         this.order = { id: "", productId: "" };
+        this.http.get('me').subscribe((data) => {
+            if (data) {
+                this.authenticated = true;
+            }
+            if (!this.authenticated) {
+                let url = 'http://localhost:7777/oauth/authorize?';
+                url += 'client_id=admin_service&';
+                url += 'redirect_uri=http://localhost:8280/oauth/callback&';
+                url += 'response_type=code&';
+                url += 'state=123';
+                window.location.href = url;
+            }
+        }, () => {
+            alert('get me fail !');
+        });
     }
     login() {
         this.http.post('login', this.credentials).subscribe(() => {
@@ -465,7 +480,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_2__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\code\idea\spring-cloud-sso-study\is-admin\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! D:\code\idea\spring-cloud-sso-study\is-admin-web\src\main.ts */"./src/main.ts");
 
 
 /***/ })

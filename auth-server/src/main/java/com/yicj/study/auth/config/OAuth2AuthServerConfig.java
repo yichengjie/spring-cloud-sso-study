@@ -42,6 +42,7 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
                 .withClient("admin_service")
                 .secret("secret")
                 .scopes("read","write").autoApprove(true)
+                .redirectUris("http://localhost:8280/oauth/callback")
                 .accessTokenValiditySeconds(360000)
                 .authorizedGrantTypes("implicit","refresh_token","password","authorization_code") ;
     }

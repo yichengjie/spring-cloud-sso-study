@@ -338,7 +338,7 @@ if (content.locals) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\code\idea\spring-cloud-sso-study\is-admin\src\styles.css */"./src/styles.css");
+module.exports = __webpack_require__(/*! D:\code\idea\spring-cloud-sso-study\is-admin-web\src\styles.css */"./src/styles.css");
 
 
 /***/ })
