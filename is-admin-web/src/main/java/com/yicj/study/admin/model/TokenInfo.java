@@ -14,8 +14,13 @@ public class TokenInfo {
     private LocalDateTime exp ;
 
     public TokenInfo init(){
-        this.exp = LocalDateTime.now().plusSeconds(this.expires_in);
+        this.exp = LocalDateTime.now().plusSeconds(this.expires_in -2);
         return this ;
+    }
+
+    // 是否已过期
+    public boolean isExpired(){
+        return this.exp.isBefore(LocalDateTime.now()) ;
     }
 
 }

@@ -23,6 +23,16 @@ public class UserController {
     public void callback(@RequestParam String code, String state,
              HttpServletResponse response, HttpSession session) throws IOException {
         log.info("state is {}", state);
+        TokenInfo tokenInfo = this.getAccessToken(code);
+        log.info("token info : {}", tokenInfo);
+        // 用户信息放入session中，后面访问会使用
+        session.setAttribute("tokenInfo", tokenInfo);
+        // 获取token信息成功以后放入session中，并跳转到首页上，也可根据state字段跳到指定页面
+        response.sendRedirect("/");
+    }
+
+    // 通过授权码获取accessToken
+    private TokenInfo getAccessToken(String code){
         String url = "http://localhost:8080/oauth/token" ;
         HttpHeaders headers = new HttpHeaders() ;
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -36,11 +46,8 @@ public class UserController {
 
         ResponseEntity<TokenInfo> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, TokenInfo.class);
         TokenInfo tokenInfo = exchange.getBody();
-        log.info("token info : {}", tokenInfo);
-        // 用户信息放入session中，后面访问会使用
-        session.setAttribute("tokenInfo", tokenInfo);
-        // 获取token信息成功以后放入session中，并跳转到首页上，也可根据state字段跳到指定页面
-        response.sendRedirect("/");
+        // 注意这里需手动调用init方法,将过期时间赋值
+        return tokenInfo ;
     }
 
 
