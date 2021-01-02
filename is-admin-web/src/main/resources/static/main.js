@@ -32,7 +32,7 @@ webpackEmptyAsyncContext.id = "./$$_lazy_route_resource lazy recursive";
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align: center\">\n    <h1>Welcome to {{title}}</h1>\n    <button (click)=\"getOrder()\"  type=\"button\" class=\"btn btn-primary\">Get Order Info</button>\n    <br>\n    <p>order id : {{order.id}}</p>\n    <p>order product id : {{order.productId}}</p>\n</div>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align: center\">\n    <h1>Welcome to {{title}}</h1>\n    <button (click)=\"getOrder()\"  type=\"button\" class=\"btn btn-primary\">Get Order Info</button>\n    <br>\n    <p>order id : {{order.id}}</p>\n    <p>order product id : {{order.productId}}</p>\n    <button (click)=\"logout()\" type=\"button\" class=\"btn btn-primary\">Logout</button>\n</div>\n");
 
 /***/ }),
 
@@ -329,8 +329,10 @@ let AppComponent = class AppComponent {
         this.http.get('me').subscribe((data) => {
             if (data) {
                 this.authenticated = true;
+                console.info("==========> 111111111111111111111");
             }
             if (!this.authenticated) {
+                console.info("==========> 222222222222222222222");
                 let url = 'http://localhost:7777/oauth/authorize?';
                 url += 'client_id=admin_service&';
                 url += 'redirect_uri=http://localhost:8280/oauth/callback&';
@@ -342,9 +344,11 @@ let AppComponent = class AppComponent {
             alert('get me fail !');
         });
     }
-    login() {
-        this.http.post('login', this.credentials).subscribe(() => {
-            this.authenticated = true;
+    logout() {
+        this.http.get('logout').subscribe(() => {
+            // 在授权服务器上也退出登录
+            //window.location.href = 'http://localhost:7777/logout' ;
+            //this.authenticated = false ;
         }, () => {
             alert('auth fail !');
         });

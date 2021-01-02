@@ -44,6 +44,13 @@ public class UserController {
     }
 
 
+    @GetMapping("/logout")
+    public boolean logout(HttpSession session){
+        session.invalidate();
+        return true ;
+    }
+
+
     @GetMapping("/me")
     public boolean me(HttpSession session){
         TokenInfo tokenInfo = (TokenInfo)session.getAttribute("tokenInfo");
