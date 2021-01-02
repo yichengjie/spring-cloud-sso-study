@@ -261,6 +261,114 @@
     3.2 删除Oauth2WebSecurityConfig.java
     3.3 删除pom依赖spring-cloud-starter-oauth2
     ```
+#### 使用jwt替换默认uuid的token
+##### 授权服务器修改
+1. 授权服务器添加jwt的tokenStore及tokenEnhancer
+    ```txt
+    @Bean
+    public TokenStore tokenStore(){
+        return new JwtTokenStore(tokenEnhancer()) ;
+    }
+    // 这里注入到spring容器，否则资源服务器启动是，获取tokenKey时报404
+    // 只有存在jwtTokenEnhancer的bean在容器中TokenKeyEndpoint端点才会发布
+    @Bean
+    public JwtAccessTokenConverter tokenEnhancer() {
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        converter.setSigningKey("123456");
+        return converter ;
+    }
+    ```
+2. AuthorizationServerSecurityConfigurer配置tokenKeyAccess发布获取tokenKey端点
+    ```txt
+       @Override
+        public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+            security
+                // 获取tokenKey接口
+                .tokenKeyAccess("isAuthenticated()")
+                // 检验token是否合法，这里如果不设置，资源服务器将无法进行token校验
+                .checkTokenAccess("isAuthenticated()");
+        }
+    ```
+3. AuthorizationServerEndpointsConfigurer配置使用tokenStore和tokenEnhancer
+    ```txt
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints
+            // 设置用来支持前四种授权类型的（用户名密码）
+            .tokenStore(tokenStore())
+            .tokenEnhancer(tokenEnhancer())
+            .authenticationManager(authenticationManager)
+            // 服务端如果要支持refresh则必须设置userDetailService
+            // 这里用来支持refresh_token授权类型的（只有用户名）
+            .userDetailsService(userDetailsService)
+        ;
+    }
+    ```
+##### 网关服务器修改
+1. 添加依赖
+    ```xml
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-oauth2</artifactId>
+    </dependency>
+    ```
+2. 删除自定义filter
+3. 添加配置
+    ```properties
+    # 获取验签token的tokenKey地址(授权服务器)
+    security.oauth2.resource.jwt.key-uri=http://localhost:7777/oauth/token_key
+    # 身份认证的信息
+    security.oauth2.client.client-id=zuul_server
+    security.oauth2.client.client-secret=secret
+    ```
+4. 添加网关安全配置
+    ```java
+    // 网关作为资源服务器存在
+    @Configuration
+    @EnableResourceServer
+    public class GatewaySecurityConfig extends ResourceServerConfigurerAdapter {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            http.authorizeRequests()
+                .antMatchers("/oauth/**").permitAll()
+                .anyRequest().authenticated();
+        }
+    }
+    ```
+##### 微服务端修改
+1. 添加依赖
+    ```xml
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-oauth2</artifactId>
+    </dependency>
+    ```
+2. 添加token验证配置(因为此时传递过来的是token而不是放在header中的明文，所以也需要校验)
+    ```properties
+    # 获取验签token的tokenKey地址(授权服务器)
+    security.oauth2.resource.jwt.key-uri=http://localhost:7777/oauth/token_key
+    security.oauth2.client.client-id=order_service
+    security.oauth2.client.client-secret=secret
+    ```
+3. 启动类添加@EnableResourceServer注解
+    ```java
+    @EnableResourceServer
+    @EnableDiscoveryClient
+    @SpringBootApplication
+    public class OrderServiceApiApplication {
+        public static void main(String[] args) {
+            SpringApplication.run(OrderServiceApiApplication.class, args) ;
+        }
+    }
+    ```
+4. Controller请求方法通过@AuthenticationPrincipal String username获取
+    ```txt
+    @GetMapping("/hello")
+    public String hello(@AuthenticationPrincipal String username){
+        return "hello world" ;
+    }
+    ```
+
 
     
 

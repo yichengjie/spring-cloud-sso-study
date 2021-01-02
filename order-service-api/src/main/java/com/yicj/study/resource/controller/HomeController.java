@@ -2,6 +2,7 @@ package com.yicj.study.resource.controller;
 
 import com.yicj.study.resource.model.OrderInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import java.util.Enumeration;
 public class HomeController {
 
     @RequestMapping("/test")
-    public String test(HttpServletRequest request, @RequestHeader String username){
+    public String test(HttpServletRequest request){
         Enumeration<String> headerNames = request.getHeaderNames();
         log.info("---------------------header-----------------------");
         while (headerNames.hasMoreElements()){
@@ -24,7 +25,8 @@ public class HomeController {
     }
 
     @GetMapping("/hello")
-    public String hello(){
+    public String hello(@AuthenticationPrincipal String username){
+        log.info("====> username : {}", username);
         return "hello world" ;
     }
 
