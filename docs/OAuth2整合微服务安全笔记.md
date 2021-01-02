@@ -368,6 +368,13 @@
         return "hello world" ;
     }
     ```
+5. 微服务之前的调用token传递我们可以使用OAuth2RestTemplate发送请求即可
+    ```txt
+    @Bean
+    public OAuth2RestTemplate oAuth2RestTemplate(OAuth2ProtectedResourceDetails resource, OAuth2ClientContext context){
+        return new OAuth2RestTemplate(resource, context) ;
+    }
+    ```
 
 
     
