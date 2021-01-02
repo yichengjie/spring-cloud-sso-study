@@ -1,0 +1,32 @@
+<div [hidden]="!authenticated" style="text-align: center">
+    <h1>Welcome to {{title}}</h1>
+    <button (click)="getOrder()"  type="button" class="btn btn-primary">Get Order Info</button>
+    <br>
+    <p>order id : {{order.id}}</p>
+    <p>order product id : {{order.productId}}</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <div [hidden]="authenticated">
+            <p>please login</p>
+            <form role="form" (submit)="login()" >
+                <div class ="form-group">
+                    <label for="username">Username:
+                        <input type="text" class ="form-control" id="username" name="username" [(ngModel)] ="credentials.username" />
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:
+                        <input type="password" class ="form-control" id="password" name="password" [(ngModel)] ="credentials.password" />
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-4"></div>
+</div>
+
+

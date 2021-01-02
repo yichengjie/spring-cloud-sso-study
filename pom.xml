@@ -13,6 +13,7 @@
         <module>zuul-server</module>
         <module>order-service-api</module>
         <module>is-admin-app</module>
+        <module>is-admin-web</module>
     </modules>
     <packaging>pom</packaging>
 
