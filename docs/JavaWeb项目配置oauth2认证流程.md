@@ -32,5 +32,31 @@
     // 用户信息放入session中，后面访问会使用
     session.setAttribute("tokenInfo", tokenInfo);
     // 获取token信息成功以后放入session中，并跳转到首页上，也可根据state字段跳到指定页面
+    // 这里需要手动跳转页面的原因是因为步骤3是授权服务器自动跳过来的，而非前端页面发送的ajax请求
     response.sendRedirect("/");
+    ```
+#### 密码模式认证
+1. 发送Post请求获取token
+    ```txt
+    String url = "http://localhost:8080/oauth/token" ;
+    HttpHeaders headers = new HttpHeaders() ;
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    headers.setBasicAuth("admin_service","secret");
+    
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>() ;
+    params.add("username", credentials.getUsername());
+    params.add("password", credentials.getPassword());
+    params.add("grant_type", "password");
+    params.add("scope", "read write");
+    HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers) ;
+    
+    ResponseEntity<TokenInfo> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, TokenInfo.class);
+    TokenInfo tokenInfo = exchange.getBody();
+    log.info("token info : {}", tokenInfo);
+    
+    ```
+2. 将步骤1中获取的token后，保存token, 这里不需要跳到主页，步骤1是前端页面通过js发送的ajax请求
+    ```txt
+    // 用户信息放入session中，后面访问会使用
+    session.setAttribute("tokenInfo", tokenInfo);
     ```
