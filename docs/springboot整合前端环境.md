@@ -1,3 +1,4 @@
+#### Node环境准备
 1. 安装maven插件
     ```xml
     <plugin>
@@ -39,24 +40,24 @@
     PATH="$PWD/node/":$PATH
     node "node/node_modules/npm/bin/npm-cli.js" "$@"
     ```
-3. 项目根目录新建ng文件
+#### 创建业务项目（以angular项目为例）
+1. 项目根目录新建ng文件
     ```txt
     #!/bin/sh
     cd $(dirname $0)
     PATH="$PWD/node/":"$PWD":$PATH
     node_modules/@angular/cli/bin/ng "$@"
     ```
-4. git bash进入项目根目录执行命令
+2. **git bash**进入项目根目录执行命令
     ```txt
     4.1 安装ng命令行工具: ./npm install @angular/cli@8.0.3
     4.2 ng新建一个hello项目: ./ng new hello
     4.3 安装bootstrap和jquery: ./npm install bootstrap@3 jquery --save
     4.3 将hello目录中的文件全部移到项目根目录中
     ```
-5. 修改angular.json中outputPath的输出路径为src/main/resources/static
-6. 执行命令编译源码
+3. 修改angular.json中outputPath的输出路径为src/main/resources/static
+4. 执行命令编译源码
     ```txt
     ./ng build --watch
     ```
-7. 启动springboot项目
-
+5. 启动springboot项目
